@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Api contatos",
+    "version": "1.0.0",
+    "description": "API contatos pós"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5500",
+      "variables": {},
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/pessoas": {
+      "summary": "Adicionar as pessoas",
+      "get": {
+        "summary": "Listar pessoas cadastradas",
+        "tags": [
+          "Pessoas"
+        ],
+        "description": " ",
+        "operationId": "Listar pessoas",
+        "responses": {
+          "200": {
+            "description": "Operação bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pessoa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "",
+        "tags": [
+          "Pessoa"
+        ],
+        "description": "",
+        "operationId": "InserePessoa",
+        "requestBody": {
+          "description": "Pessoa a ser inserida",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pessoa"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Operação de adição de pessoas"
+          }
+        }
+      }
+    },
+    "/pessoas/{idPessoa}": {
+      "get": {
+        "summary": "Obter uma pessoa especifica",
+        "tags": [
+          "Pessoas"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "idPessoa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pessoa"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa não encontrada"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pessoa": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome da pessoas"
+          },
+          "telefone": {
+            "type": "string",
+            "description": "Telefone da pessoas"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email da pessoas"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
