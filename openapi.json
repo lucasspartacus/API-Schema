@@ -1,27 +1,67 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Api contatos",
-    "version": "1.0.0",
-    "description": "API contatos pós"
+    "title": "API de Contatos",
+    "version": "1.0.0-oas3",
+    "description": "Aplicação para gerenciamento de contatos de pessoas e organizações",
+    "contact": {
+      "email": "rommelcarneiro@servidor.net",
+      "name": "Rommel Carneiro"
+    }
   },
   "servers": [
     {
+      "url": "https://virtserver.swaggerhub.com/rommelcarneiro/APIContatos/1.0.0-oas3"
+    },
+    {
       "url": "http://localhost:5500",
       "variables": {},
-      "description": "Servidor local"
+      "description": "Servidor Local"
     }
   ],
   "paths": {
     "/pessoas": {
-      "summary": "Adicionar as pessoas",
+      "summary": "Manipular informações relacionadas às pessoas da aplicação",
       "get": {
         "summary": "Listar pessoas cadastradas",
         "tags": [
           "Pessoas"
         ],
-        "description": " ",
-        "operationId": "Listar pessoas",
+        "description": "Retorna um array de pessoas ",
+        "operationId": "listaPessoas",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Texto a ser procurado no nome das pessoas",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "description": "Critério de ordenação dos resultados (ascendente | descedente)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "description": "Tags a serem procuradas nas pessoas cadastradas",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Operação bem sucedida",
@@ -39,12 +79,12 @@
         }
       },
       "post": {
-        "summary": "",
+        "summary": "Cadastrar uma pessoa",
         "tags": [
-          "Pessoa"
+          "Pessoas"
         ],
         "description": "",
-        "operationId": "InserePessoa",
+        "operationId": "inserePessoa",
         "requestBody": {
           "description": "Pessoa a ser inserida",
           "content": {
@@ -57,14 +97,15 @@
         },
         "responses": {
           "201": {
-            "description": "Operação de adição de pessoas"
+            "description": "Recurso inserido com sucesso"
           }
         }
       }
     },
     "/pessoas/{idPessoa}": {
       "get": {
-        "summary": "Obter uma pessoa especifica",
+        "summary": "Obter uma pessoa específica por meio do ID",
+        "operationId": "listaPessoaPorId",
         "tags": [
           "Pessoas"
         ],
@@ -84,6 +125,90 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "$ref": "#/components/schemas/Pessoa"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa não encontrada"
+          }
+        }
+      },
+      "put": {
+        "summary": "Alterar uma pessoa específica por meio do ID",
+        "operationId": "alteraPessoa",
+        "tags": [
+          "Pessoas"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "idPessoa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Recurso alterado com sucesso"
+          },
+          "400": {
+            "description": "Erro ao alterar o recurso no servidor"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Alterar uma pessoa específica por meio do ID",
+        "tags": [
+          "Pessoas"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "idPessoa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Recurso excluído com sucesso"
+          },
+          "400": {
+            "description": "Erro ao excluir o recurso no servidor"
+          }
+        }
+      }
+    },
+    "/pessoas/{tag}": {
+      "get": {
+        "summary": "Listar pessoas cadastradas",
+        "tags": [
+          "Pessoas"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "tag",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "",
+        "operationId": "listaPessoasPorTag",
+        "responses": {
+          "200": {
+            "description": "Operação bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Pessoa"
@@ -91,9 +216,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Pessoa não encontrada"
           }
         }
       }
@@ -104,17 +226,23 @@
       "Pessoa": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer"
+          },
           "nome": {
             "type": "string",
-            "description": "Nome da pessoas"
-          },
-          "telefone": {
-            "type": "string",
-            "description": "Telefone da pessoas"
+            "description": "Nome da referida pessoa"
           },
           "email": {
             "type": "string",
-            "description": "Email da pessoas"
+            "description": "Endereço eletrônico da pessoa"
+          },
+          "telefone": {
+            "type": "string",
+            "description": "Endereço eletrônico da pessoa"
+          },
+          "Organizacao": {
+            "$ref": "#/components/schemas/Organizacao"
           },
           "tags": {
             "type": "array",
@@ -122,6 +250,72 @@
               "type": "string"
             }
           }
+        },
+        "required": [
+          "nome",
+          "email"
+        ],
+        "example": {
+          "id": 5,
+          "nome": "Francis Ford Copolla",
+          "email": "copolla@hollywood.com",
+          "telefone": "001-124-2111",
+          "organizacao": null,
+          "tags": [
+            "cinema",
+            "trabalho"
+          ]
+        }
+      },
+      "Organizacao": {
+        "title": "Organizacao",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "segmento": {
+            "type": "string"
+          },
+          "endereco": {
+            "type": "string"
+          },
+          "cidade": {
+            "type": "string"
+          },
+          "cep": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "telefones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "nome",
+          "segmento"
+        ],
+        "example": {
+          "id": 1,
+          "nome": "Acme Corporation",
+          "segmento": "Varejo",
+          "endereco": "Av. Rebolças, 422 - Centro",
+          "cidade": "São Paulo",
+          "cep": "33422-990",
+          "estado": "SP",
+          "telefones": [
+            "11-3234-5543",
+            "11-4425-5544"
+          ]
         }
       }
     }
